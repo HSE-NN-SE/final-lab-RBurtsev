@@ -123,7 +123,8 @@ jobs:
         run: sudo docker tag flask_app:v0.1 rburtsev/rburtsev
       - name: Push image to dockerhub
         run: sudo docker push rburtsev/rburtsev
-
+      - name: Docker run
+        run: sudo docker run -d -p 8080:5000 --name test rburtsev/rburtsev:latest
   
 
 
