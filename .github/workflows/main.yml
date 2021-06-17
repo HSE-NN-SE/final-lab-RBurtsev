@@ -120,7 +120,7 @@ jobs:
       - name: Build image
         run: docker build -t flask_app:v0.1 -f Dockerfile .
       - name: Push image to dockerhub
-        run: docker push flask_app:rburtsev/rburtsev
+        run: docker push flask_app:${{ secrets.DOCKER_REPNAME }}
 
   deploy:
     runs-on: ubuntu-latest
