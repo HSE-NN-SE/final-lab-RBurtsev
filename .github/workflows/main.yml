@@ -119,8 +119,10 @@ jobs:
       - uses: actions/checkout@master
       - name: Build image
         run: docker build -t flask_app:v0.1 -f Dockerfile .
+      - name: Tag
+        run: docker tag flask_app:v0.1 rburtsev/rburtsev
       - name: Push image to dockerhub
-        run: docker push flask_app:${{ secrets.DOCKER_REPNAME }}
+        run: docker push rburtsev/rburtsev
 
   deploy:
     runs-on: ubuntu-latest
