@@ -1,71 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-## This is a basic workflow to help you get started with Actions
-#
-#name: CI
-#
-## Controls when the action will run.
-#on:
-#  # Triggers the workflow on push or pull request events but only for the main branch
-#  push:
-#    branches: [ main ]
-#  pull_request:
-#    branches: [ main ]
-#
-#  # Allows you to run this workflow manually from the Actions tab
-#  workflow_dispatch:
-#
-## A workflow run is made up of one or more jobs that can run sequentially or in parallel
-#jobs:
-#  # This workflow contains a single job called "build"
-#  Codestyle:
-#    # The type of runner that the job will run on
-#    runs-on: ubuntu-latest
-#
-#    # Steps represent a sequence of tasks that will be executed as part of the job
-#    steps:
-#      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-#      - uses: actions/checkout@v2
-#
-#      # Runs a single command using the runners shell
-#      - name: install dependencies
-#        run: pip install flake8
-#
-#      - name: codestyle
-#        run: python -m flake8 ./ --ignore=F401,E402
-#  tests:
-#    runs-on: ubuntu-latest
-#    needs: Codestyle
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: tests
-#        run: |
-#          pip install -e '.[test]'
-#          python -m coverage run -m pytest
-#          python -m coverage report
-#
-#  Deploy:
-#    runs-on: ubuntu-latest
-#    needs: tests
-#    steps:
-#      - uses: actions/checkout@v2
-#      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
-#        with:
-#          heroku_api_key: ${{secrets.API_KEY}}
-#          heroku_app_name: "my-webb-calculator" #Must be unique in Heroku
-#          heroku_email: "paemshanov@edu.hse.ru"
-#
-#
-  
-
 name: CI
 
 on:
@@ -124,7 +56,7 @@ jobs:
       - name: Push image to dockerhub
         run: sudo docker push rburtsev/rburtsev
       - name: Docker run
-        run: sudo docker run -d -p 8080:5000 --name test 28122001/test:rburtsev/rburtsev
+        run: sudo docker run -d -p 8080:5000 --name test 28122001/test:v0.1 rburtsev/rburtsev
   
 
 
