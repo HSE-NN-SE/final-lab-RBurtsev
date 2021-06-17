@@ -110,20 +110,6 @@ jobs:
           python3 -m coverage run -m pytest
           python3 -m coverage report
 
-  notify:
-    runs-on: ubuntu-latest
-    needs: [test]
-    steps:
-      - name: Telegram notification
-        uses: appleboy/telegram-action@master
-        with:
-          to: ${{ secrets.TELEGRAM_CHAT_ID }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          args: |
-            Pushed successfully
-            Pushed by: ${{ github.event.pusher.name }}
-            Last commit message: ${{ github.event.commits[0].message }}
-
   build_and_pub:
     runs-on: ubuntu-latest
     needs: test
