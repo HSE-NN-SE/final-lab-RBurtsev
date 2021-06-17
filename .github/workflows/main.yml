@@ -115,14 +115,14 @@ jobs:
     needs: test
     steps:
       - name: Login to docker.io
-        run: echo ${{ secrets.DOCKER_PWD }} | docker login -u ${{ secrets.DOCKER_LOG }} --password-stdin
+        run: echo ${{ secrets.DOCKER_PWD }} | sudo docker login -u ${{ secrets.DOCKER_LOG }} --password-stdin
       - uses: actions/checkout@master
       - name: Build image
-        run: docker build -t flask_app:v0.1 -f Dockerfile .
+        run: sudo docker build -t flask_app:v0.1 -f Dockerfile .
       - name: Tag
-        run: docker tag flask_app:v0.1 rburtsev/rburtsev
+        run: sudo docker tag flask_app:v0.1 rburtsev/rburtsev
       - name: Push image to dockerhub
-        run: docker push rburtsev/rburtsev
+        run: sudo docker push rburtsev/rburtsev
 
   
 
