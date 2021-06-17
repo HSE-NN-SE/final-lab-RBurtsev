@@ -1,3 +1,5 @@
+# This is a basic workflow to help you get started with Actions
+
 name: CI/CD
 
 # Controls when the action will run. 
@@ -8,66 +10,44 @@ on:
   pull_request:
     branches: [ main ]
 
-  # Allows you to run this workflow manually from the Actions tab
+
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
 jobs:
-  # This workflow contains a single job called "build"
   CodeStyle:
-    # The type of runner that the job will run on
-    runs-on: self-hosted
+    runs-on: azure
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install python3-pip -y
-          pip3 install flake8
-      - name: Codestyle
+        run: pip install flake8
+      - name: CodeStyle
         run: python3 -m flake8 ./ --ignore=F401,E402
-  
   Tests:
-    runs-on: self-hosted
+    runs-on: azure
     needs: CodeStyle
     steps:
       - uses: actions/checkout@v2
-      - name: tests
+      - name: Tests
         run: |
-          sudo apt update
-          sudo apt install python3-pip -y
-          pip3 install -e '.[test]'
+          pip install -e '.[test]'
           python3 -m coverage run -m pytest
           python3 -m coverage report
-  
-  docker:
-    runs-on: self-hosted
+          
+          
+  build_and_run:
     needs: Tests
+    runs-on: azure
+    env:
+      LOGIN: ${{ secrets.DOCKER_LOG }}
+      NAME: ${{ secrets.DOCKER_NAME }}
     steps:
-        #name: Set up QEMU
-        #uses: docker/setup-qemu-action@v1
-      
-        #name: Set up Docker Buildx
-        #uses: docker/setup-buildx-action@v1
-      -
-        name: Login to DockerHub
-        with:
-          username: ${{ secrets.DOCKER_LOG }}
-          password: ${{ secrets.DOCKER_PWD }}
-      -
-        name: Docker build
-        run: sudo docker build . --tag test
-      - 
-        name: Change tag
-        run: sudo docker image tag test rburtsev/rburtsev:$GITHUB_RUN_ID
-      - 
-        name: Push docker
-        run: sudo docker push rburtsev/rburtsev:$GITHUB_RUN_ID
-      -
-        name: Docker run
-        run: |
-          sudo docker ps
-          sudo docker rm -f test
-          sudo docker run -d -p 8080:5000 --name test rburtsev/rburtsev:$GITHUB_RUN_ID
-
-
+      - name: Login to docker.io
+        run:  echo ${{ secrets.DOCKER_PWD }} | sudo docker login -u $LOGIN --password-stdin
+      - uses: actions/checkout@master
+      - name: Build image
+        run: sudo docker build -t $LOGIN/$NAME:$GITHUB_RUN_ID -f Dockerfile .
+      - name: Push image to docker.io
+        run: sudo docker push $LOGIN/$NAME:$GITHUB_RUN_ID
+      - name: Run on azure
+        run: sudo docker run -d -p 80:5000 --restart always $LOGIN/$NAME:$GITHUB_RUN_ID
