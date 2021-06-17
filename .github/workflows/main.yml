@@ -56,7 +56,7 @@ jobs:
       - name: Push image to dockerhub
         run: sudo docker push rburtsev/rburtsev
       - name: Docker run
-        run: sudo docker run -d -p 8080:5000 --name test 28122001/test:v0.1 rburtsev/rburtsev
+        run: sudo docker run -d -p 8080:5000 --name rburtsev/rburtsev
   
 
 
